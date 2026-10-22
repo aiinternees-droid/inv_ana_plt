@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PAF-IAST Student Feedback Portal (SCALE)</title>
+  <style>
+    :root {
+      --navy: #0f294a;
+      --blue: #0284c7;
+      --blue-light: #e0f2fe;
+      --blue-soft: #f0f9ff;
+      --gold: #f59e0b;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --success-bg: #dcfce7;
+      --warning: #d97706;
+      --warning-bg: #fef3c7;
+      --purple: #7c3aed;
+      --purple-bg: #ede9fe;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f294a 0%, #1e40af 100%);
+      color: #ffffff;
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .header-content {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-logo {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+    }
+    header h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    header p {
+      font-size: 0.94rem;
+      color: #dbeafe;
+      max-width: 600px;
+    }
+    .share-strip {
+      margin-top: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 0.8rem;
+    }
+    .share-strip button {
+      background: #ffffff;
+      color: var(--navy);
+      border: none;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .share-strip button.wa-btn {
+      background: #22c55e;
+      color: #ffffff;
+    }
+
+    .nav-bar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+    .nav-inner {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 12px;
+      overflow-x: auto;
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      padding: 14px 16px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .nav-btn:hover { color: var(--navy); }
+    .nav-btn.active {
+      color: var(--blue);
+      border-bottom-color: var(--blue);
+    }
+    .badge-count {
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 0.75rem;
+      padding: 1px 8px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 28px auto;
+      padding: 0 16px 60px 16px;
+    }
+    .container.wide { max-width: 1100px; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 4px 16px rgba(15, 41, 74, 0.04);
+      margin-bottom: 20px;
+    }
+    @media (max-width: 600px) {
+      .card { padding: 20px 16px; }
+    }
+
+    .step-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-num {
+      background: var(--blue-light);
+      color: var(--blue);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .privacy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 540px) {
+      .privacy-grid { grid-template-columns: 1fr; }
+    }
+    .privacy-card {
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      background: #ffffff;
+      transition: all 0.15s;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .privacy-card:hover { border-color: #93c5fd; }
+    .privacy-card.selected {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+    .privacy-icon { font-size: 1.5rem; line-height: 1; }
+    .privacy-card h4 { font-size: 0.92rem; color: var(--navy); margin-bottom: 2px; }
+    .privacy-card p { font-size: 0.78rem; color: var(--muted); line-height: 1.35; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+    .form-group { margin-bottom: 18px; }
+    label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+    input[type="text"],
+    input[type="password"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 0.94rem;
+      font-family: inherit;
+      color: var(--text);
+      background: #ffffff;
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+    }
+
+    .sr-friendly-banner {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: #166534;
+    }
+
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 500px) {
+      .topic-grid { grid-template-columns: 1fr; }
+    }
+    .topic-chip {
+      border: 1.5px solid var(--border);
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .topic-chip:hover { border-color: #93c5fd; }
+    .topic-chip.selected {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      color: var(--navy);
+    }
+
+    .emoji-bar {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .emoji-btn {
+      border: 1.5px solid var(--border);
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 10px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .emoji-btn:hover { border-color: #93c5fd; }
+    .emoji-btn.selected {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      font-weight: 700;
+    }
+    .emoji-btn .em { font-size: 1.4rem; display: block; margin-bottom: 2px; }
+    .emoji-btn .lbl { font-size: 0.75rem; color: var(--muted); }
+    .emoji-btn.selected .lbl { color: var(--navy); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 0.96rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+    .btn-primary {
+      background: var(--blue);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+    .btn-primary:hover { background: var(--navy); }
+    .btn-outline {
+      background: #ffffff;
+      color: var(--navy);
+      border: 1.5px solid #cbd5e1;
+    }
+    .btn-outline:hover { background: #f1f5f9; }
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; border-radius: 8px; }
+
+    .alert-success {
+      background: var(--success-bg);
+      border: 1px solid #86efac;
+      color: #14532d;
+      padding: 18px 20px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+    .pill-t1 { background: #e0f2fe; color: #0369a1; }
+    .pill-t2 { background: var(--warning-bg); color: var(--warning); }
+    .pill-t3 { background: var(--purple-bg); color: var(--purple); }
+    .pill-resolved { background: var(--success-bg); color: var(--success); }
+
+    .simple-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .s-step {
+      padding: 8px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-align: center;
+      font-weight: 600;
+    }
+    .s-step.active {
+      background: var(--blue-light);
+      color: var(--navy);
+      border: 1px solid #7dd3fc;
+    }
+    .s-step.done {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    th { background: #f8fafc; font-weight: 700; color: var(--navy); }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .kpi-card .val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--navy);
+    }
+    .kpi-card .lbl {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 41, 74, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+    .modal-box {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+    }
+
+    @media print {
+      .nav-bar, .share-strip, .no-print { display: none !important; }
+      .container { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <img class="brand-logo" src="data:image/png;base64,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" alt="PAF-IAST Logo" />
+      <h1>PAF-IAST Student Feedback Portal (SCALE)</h1>
+      <p>
+        Share your feedback about courses, labs, or academic facilities in under a minute. Your voice goes directly to your Program Representative (SR) and Lead Student Representatives (LSRs).
+      </p>
+      <div class="share-strip no-print">
+        <span>🌐 24/7 Cloud Portal:</span>
+        <button onclick="copyPortalLink()">Copy Link</button>
+        <button class="wa-btn" onclick="shareWhatsApp()">Share on WhatsApp</button>
+        <button onclick="toggleQrModal(true)">QR Code</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <button class="nav-btn active" onclick="switchTab('submit')">
+        ✍️ Give Feedback
+      </button>
+      <button class="nav-btn" onclick="switchTab('track')">
+        🔍 Track Feedback <span class="badge-count" id="navTicketCount">0</span>
+      </button>
+      <button class="nav-btn" onclick="switchTab('council')">
+        👥 Student Representatives (SRs)
+      </button>
+      <button class="nav-btn" onclick="switchTab('admin')">
+        🔐 Admin / LSR
+      </button>
+    </div>
+  </nav>
+
+  <main class="container" id="mainContainer">
+
+    <!-- TAB 1: EASY STUDENT FEEDBACK FORM -->
+    <section id="tab-submit" class="tab-pane active">
+      <div id="submitSuccessBanner" class="alert-success"></div>
+
+      <div class="card">
+        <form id="feedbackForm" onsubmit="handleFeedbackSubmit(event)">
+
+          <div class="step-title">
+            <span class="step-num">1</span> How would you like to submit your feedback?
+          </div>
+          <div class="privacy-grid">
+            <div class="privacy-card selected" id="cardVerified" onclick="selectPrivacy('Verified')">
+              <span class="privacy-icon">🙋‍♂️</span>
+              <div>
+                <h4>Include My Name</h4>
+                <p>Submit with your full name and Registration Number.</p>
+              </div>
+            </div>
+            <div class="privacy-card" id="cardAnonymous" onclick="selectPrivacy('Confidential')">
+              <span class="privacy-icon">🔒</span>
+              <div>
+                <h4>Stay Anonymous (Private)</h4>
+                <p>Your name and Registration Number will not be asked or shown publicly.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row" id="identityFields">
+            <div class="form-group" style="margin-bottom: 6px;">
+              <label for="fName">Your Full Name</label>
+              <input type="text" id="fName" placeholder="e.g., Muhammad Ali" required />
+            </div>
+            <div class="form-group" style="margin-bottom: 6px;">
+              <label for="fReg">Registration Number</label>
+              <input type="text" id="fReg" placeholder="e.g., M25S0001EPS002" required />
+            </div>
+          </div>
+
+          <hr style="border: none; border-top: 1px solid #f1f5f9; margin: 18px 0;" />
+
+          <div class="step-title">
+            <span class="step-num">2</span> Select Your Department &amp; Degree Program
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom: 6px;">
+              <label for="fDept">Department / School</label>
+              <select id="fDept" onchange="populatePrograms()" required></select>
+            </div>
+            <div class="form-group" style="margin-bottom: 6px;">
+              <label for="fProg">Degree Program</label>
+              <select id="fProg" onchange="updateMatchedSR()" required></select>
+            </div>
+          </div>
+
+          <div class="sr-friendly-banner">
+            <div>
+              👋 <strong>Your Program Representative (SR):</strong> <span id="srMatchedName">—</span>
+            </div>
+            <span style="font-family: monospace; font-size: 0.82rem; font-weight: 700;" id="srMatchedReg"></span>
+          </div>
+
+          <div class="step-title">
+            <span class="step-num">3</span> What is your feedback about?
+          </div>
+          <div class="topic-grid">
+            <button type="button" class="topic-chip selected" onclick="selectTopic(this, 'Curriculum & CLO/PLO Alignment')">
+              📚 Course &amp; Teaching
+            </button>
+            <button type="button" class="topic-chip" onclick="selectTopic(this, 'Lab Equipment & Practical Readiness')">
+              🔬 Lab &amp; Equipment
+            </button>
+            <button type="button" class="topic-chip" onclick="selectTopic(this, 'Assessment, Grading Rubric & Exam Fairness')">
+              📝 Exams &amp; Grading
+            </button>
+            <button type="button" class="topic-chip" onclick="selectTopic(this, 'Course Outline & Calendar Adherence')">
+              💡 General Suggestion
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label for="fCourse">Course Title or Lab Name <span style="color: var(--muted); font-weight: 400;">(Optional)</span></label>
+            <input type="text" id="fCourse" placeholder="e.g., Advanced Machine Learning / Power Systems Lab" />
+          </div>
+
+          <label>Overall Experience Rating</label>
+          <div class="emoji-bar">
+            <div class="emoji-btn" onclick="selectRating(1, this)">
+              <span class="em">😟</span>
+              <span class="lbl">1 - Poor</span>
+            </div>
+            <div class="emoji-btn" onclick="selectRating(2, this)">
+              <span class="em">😐</span>
+              <span class="lbl">2 - Fair</span>
+            </div>
+            <div class="emoji-btn" onclick="selectRating(3, this)">
+              <span class="em">🙂</span>
+              <span class="lbl">3 - Okay</span>
+            </div>
+            <div class="emoji-btn selected" onclick="selectRating(4, this)">
+              <span class="em">😊</span>
+              <span class="lbl">4 - Good</span>
+            </div>
+            <div class="emoji-btn" onclick="selectRating(5, this)">
+              <span class="em">🤩</span>
+              <span class="lbl">5 - Great</span>
+            </div>
+          </div>
+
+          <div class="step-title">
+            <span class="step-num">4</span> Share Your Feedback or Suggestion
+          </div>
+          <div class="form-group">
+            <textarea id="fDetails" rows="4" placeholder="Briefly describe the issue or your suggestion for improvement..." required></textarea>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;">
+            🚀 Submit Feedback
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- TAB 2: SIMPLE TRACKER -->
+    <section id="tab-track" class="tab-pane">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px;">
+          <div>
+            <h2 style="font-size: 1.15rem; color: var(--navy);">Track Feedback Status</h2>
+            <p style="font-size: 0.85rem; color: var(--muted);">Search by your Ticket ID (e.g. <code>SCALE-2026-101</code>), program, or course name.</p>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="text" id="trackSearchInput" placeholder="🔍 Search Ticket ID or Course..." style="max-width: 240px;" oninput="renderTrackerList()" />
+            <button class="btn btn-sm btn-outline" onclick="loadCloudTickets()">🔄 Refresh</button>
+          </div>
+        </div>
+        <div id="trackerListContainer"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: STUDENT REPRESENTATIVES (SRs) -->
+    <section id="tab-council" class="tab-pane">
+      <div class="kpi-grid">
+        <div class="kpi-card" style="border-left: 4px solid var(--blue);">
+          <div class="lbl">Graduate Lead Representative (LSR)</div>
+          <div class="val" style="font-size: 1.2rem; margin: 4px 0;">Mr. Abdul Rehman</div>
+          <div style="font-size: 0.8rem; color: var(--muted);">MS Energy &amp; Power Systems (M25S0001EPS001)</div>
+        </div>
+        <div class="kpi-card" style="border-left: 4px solid var(--gold);">
+          <div class="lbl">Undergraduate Lead Representative (LSR)</div>
+          <div class="val" style="font-size: 1.2rem; margin: 4px 0;">Ms. Ghaada Qamar</div>
+          <div style="font-size: 0.8rem; color: var(--muted);">BS Artificial Intelligence (B23S0389AI027)</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <h2 style="font-size: 1.1rem; color: var(--navy);">All Program Representatives (SCALE Council)</h2>
+            <p style="font-size: 0.84rem; color: var(--muted);">Official directory of nominated Student Representatives across all degree programs</p>
+          </div>
+          <input type="text" id="srSearchInput" placeholder="🔍 Search program or name..." style="max-width: 260px;" oninput="renderSRTable()" />
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Department</th>
+                <th>Degree Program</th>
+                <th>Student Representative (SR)</th>
+                <th>Reg No.</th>
+              </tr>
+            </thead>
+            <tbody id="srDirectoryBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: LSR & ADMIN LOGIN / DASHBOARD -->
+    <section id="tab-admin" class="tab-pane">
+      <div id="adminLoginGate" class="card" style="max-width: 460px; margin: 10px auto;">
+        <h2 style="font-size: 1.15rem; color: var(--navy); margin-bottom: 6px;">🔐 LSR &amp; QEC Admin Login</h2>
+        <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 16px;">
+          Authorized access for Lead Student Representatives (LSRs) and QEC Administration.
+        </p>
+        <form onsubmit="handleAdminLogin(event)">
+          <div class="form-group">
+            <label>Select Official Account</label>
+            <select id="loginUserId">
+              <option value="M25S0001EPS001">Mr. Abdul Rehman — Graduate LSR</option>
+              <option value="B23S0389AI027">Ms. Ghaada Qamar — Undergraduate LSR</option>
+              <option value="QEC-ADMIN">Director QEC / QAIC Secretariat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Security PIN</label>
+            <input type="password" id="loginPin" value="LSR2026" placeholder="Enter PIN" required />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Login to Dashboard</button>
+        </form>
+      </div>
+
+      <div id="adminConsoleContent" style="display: none;">
+        <div class="card" style="background: var(--navy); color: #fff; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h2 style="font-size: 1.2rem;">LSR &amp; QAIC Cloud Feedback Console</h2>
+            <div style="font-size: 0.84rem; color: #cbd5e1;" id="loggedAdminName"></div>
+          </div>
+          <div class="no-print" style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-sm btn-outline" style="background: #fff;" onclick="exportCSV()">📥 Download Excel (CSV)</button>
+            <button class="btn btn-sm btn-primary" style="background: var(--gold);" onclick="window.print()">🖨️ Print Report</button>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="lbl">Total Cloud Feedback</div>
+            <div class="val" id="kpiTotal">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="lbl">In Progress (SR / HoD)</div>
+            <div class="val" id="kpiActiveT12">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="lbl">Escalated to QAIC / LSR</div>
+            <div class="val" id="kpiTier3">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="lbl">Solved / Closed</div>
+            <div class="val" id="kpiResolved">0</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size: 1.05rem; color: var(--navy); margin-bottom: 12px;">All Student Submissions (24/7 Cloud Database)</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID &amp; Date</th>
+                  <th>Program &amp; SR</th>
+                  <th>Topic &amp; Feedback</th>
+                  <th>Status</th>
+                  <th class="no-print">Update Status</th>
+                </tr>
+              </thead>
+              <tbody id="adminTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Simple QR Code Modal -->
+  <div class="modal-backdrop" id="qrModal" onclick="toggleQrModal(false)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <h3 style="color: var(--navy); margin-bottom: 6px;">Scan to Open 24/7 Feedback Portal</h3>
+      <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 12px;">Students can scan this QR code with their phone camera to submit feedback anytime:</p>
+      <img id="qrCodeImg" src="" alt="QR Code" style="width: 190px; height: 190px; border: 1px solid var(--border); border-radius: 12px; padding: 8px;" />
+      <div style="font-family: monospace; font-size: 0.78rem; color: var(--blue); margin: 10px 0; word-break: break-all;" id="qrUrlText"></div>
+      <button class="btn btn-sm btn-outline" onclick="toggleQrModal(false)" style="width: 100%;">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const NTFY_TOPIC = "paf_iast_scale_cloud_2026_v1";
+
+    const ANNEX_A_DATA = [
+      { sNo: 1, dept: "School of Computing Sciences", progNo: 1, prog: "BS Data Science", name: "Hania Rasheed", reg: "B23S0983DS009", cgpa: "3.92" },
+      { sNo: 1, dept: "School of Computing Sciences", progNo: 2, prog: "BS Cyber Security", name: "Fatima Tuz Zahra", reg: "B23F0201CYS075", cgpa: "3.69" },
+      { sNo: 1, dept: "School of Computing Sciences", progNo: 3, prog: "BS Software Engineering", name: "Zainab", reg: "B23S0075SE003", cgpa: "3.76" },
+      { sNo: 1, dept: "School of Computing Sciences", progNo: 4, prog: "BS Computer Science", name: "Laiba Javed", reg: "B23S0156CS004", cgpa: "3.80" },
+      { sNo: 1, dept: "School of Computing Sciences", progNo: 5, prog: "BS Artificial Intelligence", name: "Ghaada Qamar (Undergraduate LSR)", reg: "B23S0389AI027", cgpa: "3.53" },
+      { sNo: 1, dept: "School of Computing Sciences", progNo: 6, prog: "MS Data Science", name: "Munibah Tahreem", reg: "M24F0019DS014", cgpa: "3.84" },
+      { sNo: 1, dept: "School of Computing Sciences", progNo: 7, prog: "MS Artificial Intelligence", name: "Rizwan Shah", reg: "M24F0009AI005", cgpa: "3.67" },
+      { sNo: 1, dept: "School of Computing Sciences", progNo: 8, prog: "MS Information Security", name: "Mohsin Ali", reg: "M24F0024ISEC003", cgpa: "3.67" },
+      { sNo: 2, dept: "School of Design, Art, & Architecture Technologies", progNo: 9, prog: "BS Architecture (B. Arch)", name: "Anas", reg: "B24F0014ARC016", cgpa: "3.57" },
+      { sNo: 2, dept: "School of Design, Art, & Architecture Technologies", progNo: 10, prog: "BS Information Design", name: "Azka Khan", reg: "B22F1780SDT026", cgpa: "3.82" },
+      { sNo: 2, dept: "School of Design, Art, & Architecture Technologies", progNo: 11, prog: "BS Fashion Design", name: "Fatima Jameel", reg: "B22F1810SDT056", cgpa: "3.43" },
+      { sNo: 2, dept: "School of Design, Art, & Architecture Technologies", progNo: 12, prog: "BS Textile Design", name: "Alishba Saqib", reg: "B22F1769SDT015", cgpa: "3.61" },
+      { sNo: 3, dept: "School of Business, Entrepreneurship, and Professional Development", progNo: 13, prog: "Bachelor of Business Administration (BBA)", name: "Marwa Saeed", reg: "B23S0185BUS002", cgpa: "3.88" },
+      { sNo: 3, dept: "School of Business, Entrepreneurship, and Professional Development", progNo: 14, prog: "Master of Business Administration (MBA)", name: "Zumna Shahid", reg: "M25S0002BA001", cgpa: "3.33" },
+      { sNo: 4, dept: "English and Modern Languages", progNo: 15, prog: "BS English", name: "Maheen Zia", reg: "B22F0104ENG010", cgpa: "3.87" },
+      { sNo: 5, dept: "Biological Health Sciences", progNo: 16, prog: "BS Biomedical Science", name: "Hadia Rashid", reg: "B22F0148BMS033", cgpa: "3.92" },
+      { sNo: 5, dept: "Biological Health Sciences", progNo: 17, prog: "BS Biotechnology", name: "Afnan Malik", reg: "B22F1000BTEC025", cgpa: "3.75" },
+      { sNo: 5, dept: "Biological Health Sciences", progNo: 18, prog: "MS Biotechnology", name: "Ehtisham Shafique", reg: "M24F0010BMS007", cgpa: "3.96" },
+      { sNo: 5, dept: "Biological Health Sciences", progNo: 19, prog: "MS Biomedical Science", name: "Najam Us Sehar Ali Qamar", reg: "M24F0025BTEC004", cgpa: "3.75" },
+      { sNo: 6, dept: "Pharmaceutical Sciences", progNo: 20, prog: "BS Applied Psychology", name: "Ezin Gulzar", reg: "B22F0010PSY001", cgpa: "3.56" },
+      { sNo: 6, dept: "Pharmaceutical Sciences", progNo: 21, prog: "Doctor of Physiotherapy (DPT)", name: "Walija Waseem", reg: "B23F0006PHY036", cgpa: "3.94" },
+      { sNo: 6, dept: "Pharmaceutical Sciences", progNo: 22, prog: "Pharm D", name: "Uzair Ahmed Awan", reg: "B22F0018PHR001", cgpa: "3.98" },
+      { sNo: 7, dept: "Electrical & Computer Engineering", progNo: 23, prog: "MS Embedded Systems and IoT", name: "Muhammad Nauman", reg: "M24S0005ESI001", cgpa: "3.74" },
+      { sNo: 7, dept: "Electrical & Computer Engineering", progNo: 24, prog: "MS Energy and Power Systems", name: "Abdul Rehman (Graduate LSR)", reg: "M25S0001EPS001", cgpa: "3.67" },
+      { sNo: 7, dept: "Electrical & Computer Engineering", progNo: 25, prog: "BE Electrical Engineering", name: "Muhammad Sarmad Imran", reg: "B22F0900EE019", cgpa: "3.07" },
+      { sNo: 8, dept: "Mechanical & Manufacturing Engineering", progNo: 26, prog: "BS Biomedical Engineering Technology", name: "Laiba Javed", reg: "B23F0042BET007", cgpa: "3.00" },
+      { sNo: 9, dept: "Materials Science & Engineering", progNo: 27, prog: "BE Materials Engineering", name: "Maavia Ahmed", reg: "B22F0484MSE004", cgpa: "3.62" },
+      { sNo: 10, dept: "Mineral Resource Engineering", progNo: 28, prog: "MS Mineral Processing Engineering", name: "Nusha Fathima", reg: "M24F0015MPE002", cgpa: "3.83" },
+      { sNo: 11, dept: "CoETRE", progNo: 29, prog: "MS Transportation System Engineering", name: "Huzaifa Qadeer", reg: "M24F0012TSE001", cgpa: "3.53" },
+      { sNo: 12, dept: "Chemical and Energy Engineering", progNo: 30, prog: "BE Chemical Engineering", name: "Wajahat Irfan", reg: "B22F0607CHE001", cgpa: "3.51" },
+      { sNo: 12, dept: "Chemical and Energy Engineering", progNo: 31, prog: "MS Environmental Process and Energy Engineering", name: "Muhammad Shahzaib", reg: "M24F0007EPEE003", cgpa: "3.87" }
+    ];
+
+    const FALLBACK_TICKETS = [{"id": "SCALE-2026-101", "date": "2026-10-18", "mode": "Verified", "studentName": "Ayesha Rasheed", "studentReg": "M23F0020DS032", "dept": "Electrical & Computer Engineering", "prog": "MS Energy and Power Systems", "srName": "Abdul Rehman (Graduate LSR)", "srReg": "M25S0001EPS001", "category": "Lab Equipment & Practical Readiness", "course": "Advanced Machine Learning / Power Systems Lab", "rating": 4, "details": "Programmable DC electronic load bench logging software requires calibration and automated CSV export for 12V lead-acid battery discharge experiments.", "tier": "Tier 2 (HoD Circle)", "remarks": "Verified by Graduate LSR (Mr. Abdul Rehman). Discussed with Lab Engineer and tabled for HoD ECE approval."}, {"id": "SCALE-2026-102", "date": "2026-10-19", "mode": "Confidential", "studentName": "Anonymous Student", "studentReg": "Hidden", "dept": "School of Computing Sciences", "prog": "BS Artificial Intelligence", "srName": "Ghaada Qamar (Undergraduate LSR)", "srReg": "B23S0389AI027", "category": "Assessment, Grading Rubric & Exam Fairness", "course": "AI-304 Deep Learning & Neural Networks", "rating": 4, "details": "Semester project evaluation rubrics and milestone weights were not shared on LMS prior to midterm week.", "tier": "Resolved", "remarks": "Solved by Undergraduate LSR (Ms. Ghaada Qamar) in coordination with Course Instructor; rubric uploaded to LMS."}, {"id": "SCALE-2026-103", "date": "2026-10-20", "mode": "Verified", "studentName": "Usman Tariq", "studentReg": "B23S0912DS018", "dept": "School of Computing Sciences", "prog": "BS Data Science", "srName": "Hania Rasheed", "srReg": "B23S0983DS009", "category": "Lab Equipment & Practical Readiness", "course": "DS-401 Big Data Analytics Lab", "rating": 3, "details": "GPU compute nodes in the computing lab experience queue contention during final year project training sessions.", "tier": "Tier 3 (QAIC / LSR)", "remarks": "Escalated by SR Hania Rasheed to LSRs (Mr. Abdul Rehman & Ms. Ghaada Qamar) for QAIC review."}];
+
+    let tickets = [];
+    let selectedMode = "Verified";
+    let selectedCategory = "Curriculum & CLO/PLO Alignment";
+    let selectedRating = 4;
+    let isAdminLoggedIn = false;
+
+    function getShareUrl() {
+      return window.location.href.startsWith("http") ? window.location.href : "https://bytebin.lucko.me/";
+    }
+
+    async function loadCloudTickets() {
+      let loaded = null;
+      try {
+        const r = await fetch("https://ntfy.sh/" + NTFY_TOPIC + "/json?poll=1&since=all&t=" + Date.now());
+        if (r.ok) {
+          const text = await r.text();
+          const lines = text.trim().split("\n").filter(Boolean);
+          for (let i = lines.length - 1; i >= 0; i--) {
+            try {
+              const ev = JSON.parse(lines[i]);
+              if (ev && ev.message) {
+                const payload = JSON.parse(ev.message);
+                if (payload && Array.isArray(payload.tickets)) {
+                  loaded = payload.tickets;
+                  break;
+                }
+              }
+            } catch (e) {}
+          }
+        }
+      } catch (err) {
+        console.warn("Cloud fetch warning:", err);
+      }
+
+      if (loaded && Array.isArray(loaded)) {
+        tickets = loaded;
+        localStorage.setItem("paf_scale_cloud_cache", JSON.stringify(tickets));
+      } else {
+        const cached = localStorage.getItem("paf_scale_cloud_cache");
+        tickets = cached ? JSON.parse(cached) : FALLBACK_TICKETS;
+      }
+
+      document.getElementById("navTicketCount").textContent = tickets.length;
+      renderTrackerList();
+      if (isAdminLoggedIn) renderAdminDashboard();
+    }
+
+    async function saveCloudTickets() {
+      localStorage.setItem("paf_scale_cloud_cache", JSON.stringify(tickets));
+      try {
+        await fetch("https://ntfy.sh/" + NTFY_TOPIC, {
+          method: "POST",
+          body: JSON.stringify({ type: "sync", tickets: tickets })
+        });
+      } catch (err) {
+        console.warn("Cloud save warning:", err);
+      }
+    }
+
+    function toggleQrModal(show) {
+      const u = getShareUrl();
+      document.getElementById("qrUrlText").textContent = u;
+      document.getElementById("qrCodeImg").src =
+        "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(u);
+      document.getElementById("qrModal").style.display = show ? "flex" : "none";
+    }
+
+    function selectPrivacy(mode) {
+      selectedMode = mode;
+      document.getElementById("cardVerified").classList.toggle("selected", mode === "Verified");
+      document.getElementById("cardAnonymous").classList.toggle("selected", mode === "Confidential");
+
+      const idBox = document.getElementById("identityFields");
+      const nameIn = document.getElementById("fName");
+      const regIn = document.getElementById("fReg");
+
+      if (mode === "Confidential") {
+        idBox.style.display = "none";
+        nameIn.required = false;
+        regIn.required = false;
+      } else {
+        idBox.style.display = "grid";
+        nameIn.required = true;
+        regIn.required = true;
+      }
+    }
+
+    function selectTopic(btn, category) {
+      selectedCategory = category;
+      document.querySelectorAll(".topic-chip").forEach(el => el.classList.remove("selected"));
+      btn.classList.add("selected");
+    }
+
+    function selectRating(val, btn) {
+      selectedRating = val;
+      document.querySelectorAll(".emoji-btn").forEach(el => el.classList.remove("selected"));
+      btn.classList.add("selected");
+    }
+
+    function copyPortalLink() {
+      const u = getShareUrl();
+      navigator.clipboard.writeText(u);
+      alert("24/7 Cloud Portal Link copied:\n" + u);
+    }
+
+    function shareWhatsApp() {
+      const u = getShareUrl();
+      const msg =
+        "Assalam-o-Alaikum PAF-IAST Students!\n\n" +
+        "Submit your course, lab, or academic feedback through the official 24/7 PAF-IAST SCALE Student Feedback Portal (Anonymous option available):\n\n" +
+        u;
+      window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-pane").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
+      document.getElementById("tab-" + tabId).classList.add("active");
+      const idx = { submit: 0, track: 1, council: 2, admin: 3 }[tabId];
+      document.querySelectorAll(".nav-btn")[idx].classList.add("active");
+
+      const container = document.getElementById("mainContainer");
+      container.classList.toggle("wide", tabId === "admin" || tabId === "council");
+
+      if (tabId === "track") loadCloudTickets();
+      if (tabId === "council") renderSRTable();
+      if (tabId === "admin" && isAdminLoggedIn) loadCloudTickets();
+    }
+
+    function initDeptSelect() {
+      const depts = [...new Set(ANNEX_A_DATA.map(d => d.dept))];
+      const deptSel = document.getElementById("fDept");
+      deptSel.innerHTML = depts.map(d => `<option value="${d}">${d}</option>`).join("");
+      deptSel.value = "Electrical & Computer Engineering";
+      populatePrograms();
+    }
+
+    function populatePrograms() {
+      const dept = document.getElementById("fDept").value;
+      const progs = ANNEX_A_DATA.filter(d => d.dept === dept);
+      const progSel = document.getElementById("fProg");
+      progSel.innerHTML = progs.map(p => `<option value="${p.prog}">${p.prog}</option>`).join("");
+      if (dept === "Electrical & Computer Engineering") {
+        progSel.value = "MS Energy and Power Systems";
+      }
+      updateMatchedSR();
+    }
+
+    function updateMatchedSR() {
+      const dept = document.getElementById("fDept").value;
+      const prog = document.getElementById("fProg").value;
+      const match = ANNEX_A_DATA.find(d => d.dept === dept && d.prog === prog);
+      if (match) {
+        document.getElementById("srMatchedName").textContent = match.name;
+        document.getElementById("srMatchedReg").textContent = match.reg;
+      }
+    }
+
+    async function handleFeedbackSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.textContent = "Saving to 24/7 Cloud Database...";
+
+      await loadCloudTickets();
+
+      const dept = document.getElementById("fDept").value;
+      const prog = document.getElementById("fProg").value;
+      const match = ANNEX_A_DATA.find(d => d.dept === dept && d.prog === prog) || ANNEX_A_DATA[0];
+      const newId = "SCALE-2026-" + (101 + tickets.length);
+      const today = new Date().toISOString().slice(0, 10);
+
+      const newTicket = {
+        id: newId,
+        date: today,
+        mode: selectedMode,
+        studentName: selectedMode === "Confidential" ? "Anonymous Student" : document.getElementById("fName").value.trim(),
+        studentReg: selectedMode === "Confidential" ? "Hidden" : document.getElementById("fReg").value.trim(),
+        dept: dept,
+        prog: prog,
+        srName: match.name,
+        srReg: match.reg,
+        category: selectedCategory,
+        course: document.getElementById("fCourse").value.trim() || "General Course / Lab",
+        rating: selectedRating,
+        details: document.getElementById("fDetails").value.trim(),
+        tier: "Tier 1 (Program SR)",
+        remarks: `Assigned to Program SR (${match.name}, ${match.reg}) for Tier-1 review.`
+      };
+
+      tickets.unshift(newTicket);
+      await saveCloudTickets();
+      document.getElementById("navTicketCount").textContent = tickets.length;
+
+      const banner = document.getElementById("submitSuccessBanner");
+      banner.style.display = "block";
+      banner.innerHTML = `
+        <div style="font-size: 1.05rem; font-weight: 700; margin-bottom: 4px;">✅ Thank you! Your feedback has been saved to the 24/7 Cloud Database.</div>
+        <div style="font-size: 0.9rem;">
+          Your Tracking ID is <strong>${newId}</strong>. It has been forwarded to your Program Representative, <strong>${match.name}</strong>.
+          <button class="btn btn-sm btn-outline" style="margin-left: 10px;" onclick="switchTab('track')">Check Status &rarr;</button>
+        </div>
+      `;
+
+      document.getElementById("fCourse").value = "";
+      document.getElementById("fDetails").value = "";
+      btn.disabled = false;
+      btn.textContent = "🚀 Submit Feedback";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function getSimpleStatusBadge(tier) {
+      if (tier === "Resolved") return `<span class="pill pill-resolved">✅ Solved</span>`;
+      if (tier.includes("Tier 3")) return `<span class="pill pill-t3">🏛️ With LSR &amp; QAIC</span>`;
+      if (tier.includes("Tier 2")) return `<span class="pill pill-t2">📋 With HoD</span>`;
+      return `<span class="pill pill-t1">👀 With Program SR</span>`;
+    }
+
+    function renderTrackerList() {
+      const q = (document.getElementById("trackSearchInput").value || "").toLowerCase();
+      const filtered = tickets.filter(t =>
+        t.id.toLowerCase().includes(q) ||
+        t.course.toLowerCase().includes(q) ||
+        t.prog.toLowerCase().includes(q) ||
+        t.details.toLowerCase().includes(q)
+      );
+
+      const container = document.getElementById("trackerListContainer");
+      if (!filtered.length) {
+        container.innerHTML = `<p style="color: var(--muted); text-align: center; padding: 20px;">No matching feedback records found.</p>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(t => {
+        const isSolved = t.tier === "Resolved";
+        const isInReview = !isSolved;
+        return `
+          <div style="border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 14px; background: #fff;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+              <div>
+                <strong style="color: var(--navy); font-size: 1rem;">${t.id}</strong>
+                <span style="color: var(--muted); font-size: 0.82rem; margin-left: 8px;">${t.prog} &bull; ${t.date}</span>
+              </div>
+              ${getSimpleStatusBadge(t.tier)}
+            </div>
+
+            <div style="font-size: 0.88rem; color: var(--muted); margin-bottom: 6px;">
+              <strong>Course / Lab:</strong> ${t.course} &nbsp;|&nbsp; <strong>Representative (SR):</strong> ${t.srName}
+            </div>
+
+            <div style="font-size: 0.92rem; color: var(--text); background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+              ${t.details}
+            </div>
+
+            <div class="simple-steps">
+              <div class="s-step active">1. Submitted to SR</div>
+              <div class="s-step ${isInReview || isSolved ? 'active' : ''}">2. Under Review (HoD / LSR)</div>
+              <div class="s-step ${isSolved ? 'done' : ''}">3. Solved</div>
+            </div>
+
+            <div style="font-size: 0.82rem; color: var(--navy); background: var(--blue-soft); padding: 8px 12px; border-radius: 8px;">
+              <strong>Progress Note:</strong> ${t.remarks}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderSRTable() {
+      const q = (document.getElementById("srSearchInput").value || "").toLowerCase();
+      const rows = ANNEX_A_DATA.filter(r =>
+        r.dept.toLowerCase().includes(q) ||
+        r.prog.toLowerCase().includes(q) ||
+        r.name.toLowerCase().includes(q) ||
+        r.reg.toLowerCase().includes(q)
+      );
+
+      document.getElementById("srDirectoryBody").innerHTML = rows.map(r => {
+        const isLSR = r.reg === "M25S0001EPS001" || r.reg === "B23S0389AI027";
+        return `
+          <tr style="${isLSR ? 'background: #fffbeb; font-weight: 600;' : ''}">
+            <td>${r.dept}</td>
+            <td>${r.prog}</td>
+            <td>
+              ${r.name}
+              ${isLSR ? '<span class="pill pill-t2" style="margin-left:6px;">Lead SR (QAIC)</span>' : ''}
+            </td>
+            <td style="font-family: monospace;">${r.reg}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const userId = document.getElementById("loginUserId").value;
+      const pin = document.getElementById("loginPin").value.trim();
+
+      if (pin !== "LSR2026" && pin !== "QEC2026" && pin.toUpperCase() !== userId) {
+        alert("Invalid Security PIN.");
+        return;
+      }
+
+      isAdminLoggedIn = true;
+      const roleLabels = {
+        "M25S0001EPS001": "Mr. Abdul Rehman — Graduate LSR (QAIC)",
+        "B23S0389AI027": "Ms. Ghaada Qamar — Undergraduate LSR (QAIC)",
+        "QEC-ADMIN": "Director QEC / QAIC Secretariat"
+      };
+      document.getElementById("adminLoginGate").style.display = "none";
+      document.getElementById("adminConsoleContent").style.display = "block";
+      document.getElementById("loggedAdminName").textContent = "Logged in as: " + roleLabels[userId];
+      loadCloudTickets();
+    }
+
+    async function updateTicketTier(id, newTier) {
+      const t = tickets.find(x => x.id === id);
+      if (!t) return;
+      const note = prompt("Update progress note for students (" + id + "):", t.remarks);
+      if (note === null) return;
+
+      t.tier = newTier;
+      if (note.trim() !== "") t.remarks = note.trim();
+      await saveCloudTickets();
+      renderAdminDashboard();
+    }
+
+    function renderAdminDashboard() {
+      const total = tickets.length;
+      const activeT12 = tickets.filter(t => t.tier.includes("Tier 1") || t.tier.includes("Tier 2")).length;
+      const tier3 = tickets.filter(t => t.tier.includes("Tier 3")).length;
+      const resolved = tickets.filter(t => t.tier === "Resolved").length;
+
+      document.getElementById("kpiTotal").textContent = total;
+      document.getElementById("kpiActiveT12").textContent = activeT12;
+      document.getElementById("kpiTier3").textContent = tier3;
+      document.getElementById("kpiResolved").textContent = resolved;
+
+      document.getElementById("adminTableBody").innerHTML = tickets.map(t => `
+        <tr>
+          <td>
+            <strong>${t.id}</strong><br/>
+            <span style="font-size:0.78rem; color:var(--muted);">${t.date}</span>
+          </td>
+          <td>
+            <strong>${t.prog}</strong><br/>
+            <span style="font-size:0.78rem; color:var(--blue);">SR: ${t.srName}</span><br/>
+            <span style="font-size:0.75rem; color:var(--muted);">By: ${t.studentName} (${t.studentReg})</span>
+          </td>
+          <td style="max-width: 340px;">
+            <div style="font-size:0.8rem; font-weight:600; color:var(--navy);">${t.course}</div>
+            <div style="margin: 4px 0;">${t.details}</div>
+            <div style="font-size:0.76rem; color:var(--muted);">Note: ${t.remarks}</div>
+          </td>
+          <td>${getSimpleStatusBadge(t.tier)}</td>
+          <td class="no-print">
+            <div style="display:flex; flex-direction:column; gap:5px;">
+              <button class="btn btn-sm btn-outline" onclick="updateTicketTier('${t.id}', 'Tier 2 (HoD Circle)')">Send to HoD</button>
+              <button class="btn btn-sm btn-outline" onclick="updateTicketTier('${t.id}', 'Tier 3 (QAIC / LSR)')">Send to QAIC</button>
+              <button class="btn btn-sm btn-primary" style="background:var(--success);" onclick="updateTicketTier('${t.id}', 'Resolved')">✅ Mark Solved</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function exportCSV() {
+      const headers = ["Ticket ID", "Date", "Mode", "Student Name", "Reg No", "Department", "Program", "Assigned SR", "Category", "Course", "Status", "Feedback Details", "Progress Note"];
+      const rows = tickets.map(t => [
+        t.id, t.date, t.mode, t.studentName, t.studentReg, t.dept, t.prog, t.srName, t.category,
+        `"${(t.course || '').replace(/"/g, '""')}"`,
+        t.tier,
+        `"${(t.details || '').replace(/"/g, '""')}"`,
+        `"${(t.remarks || '').replace(/"/g, '""')}"`
+      ]);
+      const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+      const link = document.createElement("a");
+      link.setAttribute("href", encodeURI(csvContent));
+      link.setAttribute("download", "PAF_IAST_SCALE_Feedback_Report.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    initDeptSelect();
+    renderSRTable();
+    loadCloudTickets();
+  </script>
+</body>
+</html>
